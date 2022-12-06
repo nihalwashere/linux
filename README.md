@@ -1,5 +1,24 @@
 # CMPE-283 - Virtual Technologies Assignment-2
 
+## Team Members
+
+1. Nihal Kaul (016697512)
+2. Poojan Shah (016583528)
+
+## Contribution
+
+1. Nihal Kaul
+
+- Setup GCP
+- Cloned and built linux kernel source
+- Updated cpuid.c and vmx.c files to find out total exits and total cycles
+
+2. Poojan Shah
+
+- Setup nested virtual machine using virt-install
+- Tested the updated linux kernel source using the cpuid package inside the nested virtual machine
+- Debugged errors that occured after updating vmx.c and cpuid.c files
+
 ## Getting started guide
 
 ### Google Cloud Platform
@@ -134,9 +153,9 @@ Run the following command inside your nested virtual machine
 
 `cpuid -1 -l 0x4ffffffc`
 
-You should be able to see an output like below
-
 ![alt text](./output1.png)
+
+You should be able to see an output like below
 
 ### Test leaf node 0x4FFFFFFD
 
