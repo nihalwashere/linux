@@ -2,8 +2,8 @@
 
 ## Team Members
 
-1. Nihal Kaul (016697512)
-2. Poojan Shah (016583528)
+1. NIHAL KAUL (016697512)
+2. POOJAN SHAH (016583528)
 
 ## Contribution
 
