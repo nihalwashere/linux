@@ -1513,6 +1513,9 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 
 	if (eax == 0x4ffffffc) {
 		eax = total_exits;
+		ebx = 0;
+		ecx = 0;
+		edx = 0;
 		printk(KERN_INFO "0x4ffffffc TOTAL EXITS = %d", total_exits);
 	} else if (eax == 0x4ffffffd) {
 		printk(KERN_INFO "0x4ffffffd TOTAL TIME IN VMM = %llu\n", total_proc_cycles);
