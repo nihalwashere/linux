@@ -1497,6 +1497,10 @@ EXPORT_SYMBOL_GPL(kvm_cpuid);
 u32 total_exits = 0;
 EXPORT_SYMBOL(total_exits);
 
+u64 total_proc_cycles = 0;
+EXPORT_SYMBOL(total_proc_cycles);
+
+
 int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 {
 	u32 eax, ebx, ecx, edx;
@@ -1509,7 +1513,12 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 
 	if (eax == 0x4ffffffc) {
 		eax = total_exits;
-		printk(KERN_INFO "0x4ffffffc Total Exits = %d", total_exits);
+		printk(KERN_INFO "0x4ffffffc TOTAL EXITS = %d", total_exits);
+	} else if (eax == 0x4ffffffd) {
+		printk(KERN_INFO "0x4ffffffd TOTAL TIME IN VMM = %llu\n", total_proc_cycles);
+		ebx = (total_proc_cycles >> 32);
+		ecx = (total_proc_cycles & 0xffffffff);
+		edx = 0;
 	} else {
 		kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, false);
 	}

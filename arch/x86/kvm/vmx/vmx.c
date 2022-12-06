@@ -6277,6 +6277,7 @@ void dump_vmcs(struct kvm_vcpu *vcpu)
 }
 
 extern u32 total_exits;
+extern u64 total_proc_cycles;
 
 
 /*
@@ -6285,6 +6286,8 @@ extern u32 total_exits;
  */
 static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 {
+	u64 enter_rdtsc = rdtsc();
+
 	struct vcpu_vmx *vmx = to_vmx(vcpu);
 	union vmx_exit_reason exit_reason = vmx->exit_reason;
 	u32 vectoring_info = vmx->idt_vectoring_info;
@@ -6449,6 +6452,8 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 						kvm_vmx_max_exit_handlers);
 	if (!kvm_vmx_exit_handlers[exit_handler_index])
 		goto unexpected_vmexit;
+
+	total_proc_cycles = total_proc_cycles + (rdtsc() - enter_rdtsc);
 
 	return kvm_vmx_exit_handlers[exit_handler_index](vcpu);
 
