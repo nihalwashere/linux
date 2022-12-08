@@ -1500,6 +1500,11 @@ EXPORT_SYMBOL(total_exits);
 u64 total_proc_cycles = 0;
 EXPORT_SYMBOL(total_proc_cycles);
 
+u64 exit_processing_times[69];
+EXPORT_SYMBOL(exit_processing_times);
+
+u64 exit_counts[69];
+EXPORT_SYMBOL(exit_counts);
 
 int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 {
@@ -1519,9 +1524,36 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 		printk(KERN_INFO "0x4ffffffc TOTAL EXITS = %d", total_exits);
 	} else if (eax == 0x4ffffffd) {
 		printk(KERN_INFO "0x4ffffffd TOTAL TIME IN VMM = %llu\n", total_proc_cycles);
+		eax = 0;
 		ebx = (total_proc_cycles >> 32);
 		ecx = (total_proc_cycles & 0xffffffff);
 		edx = 0;
+	} else if (eax == 0x4ffffffe){
+		if (ecx < 0 || ecx == 35 || ecx == 38 || ecx == 42 || ecx > 69){
+			printk(KERN_INFO "EXIT REASON : %d NOT DEFINED IN SDM", ecx);
+			eax = 0;	
+			ebx = 0;
+			ecx = 0;
+			edx = 0xffffffff;
+		} else if (ecx == 3 || ecx == 4 || ecx == 5 || ecx == 6 || ecx == 11 || ecx == 16 || ecx == 17 || ecx == 33 || ecx == 34 || ecx == 51 || ecx == 63 || ecx == 64 || ecx == 66){
+			printk(KERN_INFO "EXIT REASON : %d NOT ENABLED IN KVM", ecx);
+			eax = 0;
+			ebx = 0;
+			ecx = 0;
+			edx = 0;
+		} else {
+			eax = exit_counts[ecx];
+			printk(KERN_INFO "0x4ffffffe EXIT NUMBER: %d, TOTAL EXITS : %d", ecx, eax);
+		}
+	} else if(eax == 0x4fffffff){
+			u64 exit_time = exit_processing_times[ecx];
+			u32 low_32_bits = (u32)exit_time;
+			u32 high_32_bits = exit_time >> 32;
+			eax = 0;
+			ebx = high_32_bits;
+			ecx = low_32_bits;
+			edx = 0;
+			printk(KERN_INFO "0x4fffffff TOTAL EXIT PROCESSING TIME : %llu", exit_time);
 	} else {
 		kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, false);
 	}
