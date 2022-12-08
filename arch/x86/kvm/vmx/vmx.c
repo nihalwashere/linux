@@ -6459,7 +6459,7 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 		goto unexpected_vmexit;
 
 	total_proc_cycles = total_proc_cycles + (rdtsc() - enter_rdtsc);
-	exit_processing_times[exit_reason.basic] = rdtsc() - enter_rdtsc;
+	exit_processing_times[exit_reason.basic] = exit_processing_times[exit_reason.basic] + (rdtsc() - enter_rdtsc);
 	
 
 	return kvm_vmx_exit_handlers[exit_handler_index](vcpu);
