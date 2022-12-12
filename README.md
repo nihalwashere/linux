@@ -2,8 +2,8 @@
 
 ## Team Members
 
-1. NIHAL KAUL (016697512)
-2. POOJAN SHAH (016583528)
+1. Nihal Kaul (016697512)
+2. Poojan Shah (016583528)
 
 ## Contribution
 
@@ -131,13 +131,13 @@ Check if `kvm` module is already loaded
 
 Remove `kvm` if already loaded
 
-`sudo rmmod  kvm_intel`
-`sudo rmmod  kvm`
+1. `sudo rmmod  kvm_intel`
+2. `sudo rmmod  kvm`
 
 Load updated kvm modules
 
-`sudo modprobe kvm`
-`sudo modprobe kvm_intel`
+1. `sudo modprobe kvm`
+2. `sudo modprobe kvm_intel`
 
 ## Test your code
 
@@ -166,3 +166,99 @@ Run the following command inside your nested virtual machine
 You should be able to see an output like below
 
 ![alt text](./output2.png)
+
+### Test leaf node 0x4FFFFFFE
+
+Run the following `C` script inside your nested virtual machine. We are testing the exit type 0 (check input value for ecx).
+
+```
+#include <stdio.h>
+#include <sys/types.h>
+
+static inline void
+__cpuid(unsigned int *eax, unsigned int *ebx, unsigned int *ecx,
+unsigned int *edx)
+{
+    asm volatile("cpuid"
+    : "=a" (*eax),
+    "=b" (*ebx),
+    "=c" (*ecx),
+    "=d" (*edx)
+    : "0" (*eax), "1" (*ebx), "2" (*ecx), "3" (*edx));
+}
+
+int main(int argc, char **argv)
+{
+    unsigned int eax, ebx, ecx, edx;
+    unsigned long long time;
+
+    eax = 0x4FFFFFFE;
+    ecx = 0;
+    __cpuid(&eax, &ebx, &ecx, &edx);
+    printf("######################\n");
+    printf("CPUID(0x4FFFFFFE), EXIT=%u, EXIT CYCLES=%u\n", ecx, eax);
+}
+```
+
+You should be able to see an output like below
+
+![alt text](./exit0.png)
+
+### Test leaf node 0x4FFFFFFF
+
+Run the following `C` script inside your nested virtual machine. We are testing the exit type 0 (check input value for ecx).
+
+```
+#include <stdio.h>
+#include <sys/types.h>
+
+static inline void
+__cpuid(unsigned int *eax, unsigned int *ebx, unsigned int *ecx,
+unsigned int *edx)
+{
+    asm volatile("cpuid"
+    : "=a" (*eax),
+    "=b" (*ebx),
+    "=c" (*ecx),
+    "=d" (*edx)
+    : "0" (*eax), "1" (*ebx), "2" (*ecx), "3" (*edx));
+}
+
+int main(int argc, char **argv)
+{
+    unsigned int eax, ebx, ecx, edx;
+    unsigned long long time;
+
+    eax = 0x4FFFFFFE;
+    ecx = 0;
+    __cpuid(&eax, &ebx, &ecx, &edx);
+    printf("######################\n");
+    printf("CPUID(0x4FFFFFFF), EXIT PROCESSING TIME HIGH 32 BITS=%u, EXIT PROCESSING TIME LOW 32 BITS=%u\n", ebx, ecx);
+}
+```
+
+You should be able to see an output like below
+
+![alt text](./exit0_processing_time.png)
+
+## Questions
+
+1. Comment on the frequency of exits – does the number of exits increase at a stable rate? Or are there
+   more exits performed during certain VM operations? Approximately how many exits does a full VM
+   boot entail?
+
+- Upon observing, we noticed that the frequency of exits increases gradually. There are more exits whenever a VM is booting. On testing we found that the total number of exits during a full VM boot is `956591`. But of course this is not a hard number and it will change on every VM boot. The total number of exits could be more or less.
+
+![alt text](./full_vm_boot.png)
+
+2. Of the exit types defined in the SDM, which are the most frequent? Least?
+
+- The most frequent exit type is `48` and the least is `47`, however, there are a lot of exit types which are not executed at all and their exit frequency is `0`.
+
+Output for exit reason 47
+
+![alt text](./exit47.png)
+
+Output for exit reason 48
+
+![alt text](./exit48.png)
