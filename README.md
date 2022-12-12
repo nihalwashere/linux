@@ -11,12 +11,12 @@
 
 - Setup GCP
 - Cloned and built linux kernel source
-- Updated cpuid.c and vmx.c files to find out total exits and total cycles
+- Updated cpuid.c and vmx.c files to find out total exits, total cycles, total exits and total processing time for a particular exit reason
 
 2. Poojan Shah
 
 - Setup nested virtual machine using virt-install
-- Tested the updated linux kernel source using the cpuid package inside the nested virtual machine
+- Tested the updated linux kernel source using the cpuid package and a test `C` script inside the nested virtual machine
 - Debugged errors that occured after updating vmx.c and cpuid.c files
 
 ## Getting started guide
