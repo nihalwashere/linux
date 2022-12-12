@@ -6288,6 +6288,7 @@ extern u64 exit_counts[69];
 static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 {
 	u64 enter_rdtsc = rdtsc();
+	u16 basic_exit_reason;
 
 	struct vcpu_vmx *vmx = to_vmx(vcpu);
 	union vmx_exit_reason exit_reason = vmx->exit_reason;
@@ -6296,8 +6297,10 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 	
 	total_exits++;
 
-	if(exit_reason.basic < 70){
-		exit_counts[exit_reason.basic]++;
+	basic_exit_reason = (u16)to_vmx(vcpu)->exit_reason.basic;
+
+	if(basic_exit_reason < 70){
+		exit_counts[basic_exit_reason]++;
 	}
 
 
@@ -6459,7 +6462,7 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 		goto unexpected_vmexit;
 
 	total_proc_cycles = total_proc_cycles + (rdtsc() - enter_rdtsc);
-	exit_processing_times[exit_reason.basic] = exit_processing_times[exit_reason.basic] + (rdtsc() - enter_rdtsc);
+	exit_processing_times[basic_exit_reason] = exit_processing_times[basic_exit_reason] + (rdtsc() - enter_rdtsc);
 	
 
 	return kvm_vmx_exit_handlers[exit_handler_index](vcpu);
