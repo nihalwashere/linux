@@ -153,9 +153,9 @@ Run the following command inside your nested virtual machine
 
 `cpuid -1 -l 0x4ffffffc`
 
-![alt text](./output1.png)
-
 You should be able to see an output like below
+
+![alt text](./output1.png)
 
 ### Test leaf node 0x4FFFFFFD
 
