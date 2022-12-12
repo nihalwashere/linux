@@ -229,7 +229,7 @@ int main(int argc, char **argv)
     unsigned int eax, ebx, ecx, edx;
     unsigned long long time;
 
-    eax = 0x4FFFFFFE;
+    eax = 0x4FFFFFFF;
     ecx = 0;
     __cpuid(&eax, &ebx, &ecx, &edx);
     printf("######################\n");
