@@ -1,4 +1,4 @@
-# CMPE-283 - Virtual Technologies Assignment-2
+# CMPE-283 - Virtual Technologies Assignment 2 & 3
 
 ## Team Members
 
